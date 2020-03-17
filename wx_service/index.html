@@ -1,0 +1,230 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>用户绑定</title>
+    
+    <style>
+        *,body,html{
+            margin: 0;
+            padding: 0;
+        }
+        body{
+            background-color: beige;
+        }
+        .dv{
+            width: 90%;
+            /* height: 100%; */
+            margin: 10% auto;
+        }
+        .dv h3{
+            color: #000000;
+            text-align: left;
+        }
+        .dv input{
+            width: 100%;
+            height: 50px;
+            border-radius: 10px;
+            border: 1px solid #999;
+            margin: 20px auto;
+            font-size: 16px;
+            padding: 0 0 0 4%;
+            outline: none;
+        }
+        .bd{
+            width: 100%;
+            height: 50px;
+            background-color: rgb(7,193,96);
+            text-align: center;
+            margin: 20px auto;
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 16px;
+            letter-spacing: 8px;
+            outline: none;
+        }
+        .content{
+            width: 100%;
+            margin: 20px auto;
+            color: #999;
+        }
+        .content p{
+            margin: 10px 0;
+            font-size: 16px;
+        }
+
+        .alert{
+            font-size: 12px;
+            color: #f40;
+        }
+        .hidden{
+			display: none;
+		}
+		.show{
+			display: block;
+		}
+        .success{
+            background: rgba(153,153,153,0.5);
+            width: 100%;
+            height: 100%;
+            font-size: 16px;
+            text-align: center;
+            color: #000;
+            letter-spacing: 10px;
+            position: fixed;
+            top: 0;
+        }
+        .success p{
+            width: 66%;
+            height: 100px;
+            line-height: 100px;
+            background-color: #fff;
+            margin: 40% auto 0;
+            z-index: 10;
+            border-radius: 20px;
+        }
+    </style>
+	<script type="text/javascript" src="../js/jquery.js"></script>
+</head>
+<body>
+        <script>
+                var openid = GetQueryString("openid");
+                if(openid==null || !openid ){
+                    $('.dv').addClass('hidden')
+                    $('.success').addClass('hidden')
+                    var hreftemp = window.location.href;
+                    if(hreftemp.indexOf('uhref=')>0){
+                       
+                        window.location.href = hreftemp;
+                    }else{
+                        //跳转获取openid
+                        window.location.href='https://wx.sdkndsm.com/qishen/tp5/public/index.php/qisheng/Qsservice/go_page.html?uhref='+hreftemp;
+                    }   
+                }
+        
+                
+                function GetQueryString(parmname){
+                    var reg = new RegExp("(^|&)"+ parmname +"=([^&]*)(&|$)");
+                    var r = window.location.search.substr(1).match(reg);
+                    if(r!=null)return  unescape(r[2]); return null;
+                }
+            </script>
+    <div class="dv hidden">
+        <h3>请输入手机号</h3>
+        <input type="number" id="phone" placeholder="请输入手机号">
+        <span class="alert">请填写正确电话号码!</span>
+        <button class="bd" id="bangd">绑定</button>
+        <div class="content">
+            <p>姓名: <span id="name"></span></p>
+            <p class="sjh">手机号：<span id="phoneNum"></span></p>
+            <p>企业：<span id="industryName"></span></p>
+        </div>
+        <button class="bd" id="sure">确定</button>
+    </div>
+    <div class="success hidden"><p>绑定成功!</p></div>
+
+    <script>
+        $(function(){
+        
+            var openid = GetQueryString("openid");
+            var userId = ''
+            $.ajax({
+                type: "GET",
+                url: "https://wx.sdkndsm.com/qishen/tp5/public/index.php/qisheng/User/detail.html",
+                data: {
+                    service_openid: openid
+                },
+                dataType: "json",
+                success: function(data){
+                    $('.dv').removeClass('hidden').addClass('show')
+                    if(data.obj){
+                        $('#sure').addClass('hidden')
+                        $('#phone').addClass('hidden')
+                        $('.alert').addClass('hidden')
+                        $('#bangd').addClass('hidden')
+                        $('.success').addClass('hidden')
+                        $('h3').html('个人信息')
+                        $('#name').html(data.obj.true_name)
+                        $('#phoneNum').html(data.obj.phone)
+                        $('#industryName').html(data.obj.company_name)
+                        openid = openid
+                    }else{
+                        $('.content').addClass('hidden')
+                        $('.alert').addClass('hidden')
+                        $('#sure').addClass('hidden')
+                        $('.success').addClass('hidden')
+                        $('#bangd').click('on',function(){
+                            var p1 = /^(13[0-9]\d{8}|14[0-35-9]\d{8}|15[0-35-9]\d{8}|16[0-35-9]\d{8}|17[0-35-9]\d{8}|18[0-9]\d{8}|19[57]\d{8})$/;
+                            if(p1.test($('#phone').val())==false){
+                                $('.alert').removeClass('hidden').addClass('show')
+                            }else{
+                                $.ajax({
+                                    type: "GET",
+                                    url: "https://wx.sdkndsm.com/qishen/tp5/public/index.php/qisheng/User/detail.html",
+                                    data: {
+                                        phone: $('#phone').val()
+                                    },
+                                    dataType: "json",
+                                    success: function(data){
+                                        userId = data.obj.user_id
+                                        $('#name').html(data.obj.true_name)
+                                        $('#industryName').html(data.obj.company_name)
+                                        $('.sjh').addClass('hidden')
+                                        $('#phone').attr("disabled","disabled");
+                                        $('.alert').removeClass('show').addClass('hidden')
+                                        $('#bangd').addClass('hidden')
+                                        $('.content').removeClass('hidden').addClass('show')
+                                        $('#sure').removeClass('hidden').addClass('show')
+                                       
+                                    }
+                                })
+                            }
+                        })
+                        $('#sure').click('on',function(){
+                            $.ajax({
+                                type: "GET",
+                                url: "https://wx.sdkndsm.com/qishen/tp5/public/index.php/qisheng/User/add_or_save.html",
+                                data: {
+                                    user_id: userId,
+                                    service_openid: openid
+                                },
+                                dataType: "json",
+                                success: function(data){
+                                    $('.success').addClass('show')
+                                    setTimeout(function(){
+                                        $('.success').removeClass('show').addClass('hidden')
+                                    },800)
+                                    $('.sjh').removeClass('hidden').addClass('show')
+                                    $('#sure').addClass('hidden')
+                                    $('#phone').addClass('hidden')
+                                    $('.alert').addClass('hidden')
+                                    $('#bangd').addClass('hidden')
+                                    $('.success').addClass('hidden')
+                                    $('#sure').removeClass('show').addClass('hidden')
+                                    $('h3').html('个人信息')
+                                    $('#name').html(data.obj.true_name)
+                                    $('#phoneNum').text(data.obj.phone)
+                                    $('#industryName').html(data.obj.company_name)
+                                }
+                            })
+                        })
+                        
+                    }
+                },
+                error: {
+                    // alert('服务器出错，请重试')
+                }
+            })
+        })
+       
+       
+       
+            //获取URL地址参数 
+        
+        
+        
+        </script>
+</body>
+</html>

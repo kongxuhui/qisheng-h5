@@ -1,0 +1,183 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>设备信息</title>
+	<script type="text/javascript" src="../js/jquery.js"></script>
+	<script src="../js/wx.js"></script>
+    <style>
+        *,body,html,ul,li{
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            font-size: 12px;
+            color: #353232;
+        }
+        #container{
+            width: 0;
+            height: 100%;
+            /* background-color: #e7e7e7; */
+        }
+        ul{
+            padding: 20px 0 8px 0 ;
+            width: 90%;
+            margin:  0 auto;
+            border-bottom: 1px solid #ccc;
+        }
+        ul li{
+            width: 100%;
+        }
+        .clear{
+            clear: both;
+
+        }
+        ul li span:first-child{
+            display: inline-block;
+            width: 33%;
+        }
+        ul li span{
+            float: left;
+            margin: 10px 10px;
+        }
+        ul:last-child{
+            border: none;
+        }
+        #container1{
+            display: none;
+            width: 0;
+            text-align: center;
+            padding: 45% 0 0 0;
+            font-size: 20px;
+            letter-spacing: 6px;
+        }
+    </style>
+    
+</head>
+<body>
+    
+    <div id="container">
+        <ul>
+            <li>
+                <div>
+                    <span>设备名称</span>
+                    <span id="DeviceName"></span>
+                    <div class="clear"></div>
+                </div>
+            </li>
+            <li>
+                <div>
+                    <span>所属公司</span>
+                    <span id="company_name"></span>
+                    <div class="clear"></div>
+                </div>
+            </li>
+            <li>
+                <div>
+                    <span>累计用电量</span>
+                    <span id="EPLJ4"></span>
+                    <div class="clear"></div>
+                </div>
+            </li>
+        </ul>
+        <ul>
+            <li>
+                <div>
+                    <span>电压</span>
+                    <span id="UQ"></span>
+                    <div class="clear"></div>
+                </div>
+            </li>
+            <li>
+                <div>
+                    <span>电流</span>
+                    <span id="IQ"></span>
+                    <div class="clear"></div>
+                </div>
+            </li>
+            <li>
+                <div>
+                    <span>电压等级</span>
+                    <span id="Vclass"></span>
+                    <div class="clear"></div>
+                </div>
+            </li>
+        </ul>
+        <ul>
+            <li>
+                <div>
+                    <span>有功功率数据</span>
+                    <span id="PQ"></span>
+                    <div class="clear"></div>
+                </div>
+            </li>
+            <li>
+                <div>
+                    <span>无功功率数据</span>
+                    <span id="QQ"></span>
+                    <div class="clear"></div>
+                </div>
+            </li>
+            <li>
+                <div>
+                    <span>视在功率数据</span>
+                    <span id="SQ"></span>
+                    <div class="clear"></div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div id="container1">
+        暂无权限
+    </div>
+    <script>
+        function ready() {
+            if(window.__wxjs_environment === 'miniprogram'){
+                function GetQueryString(parmname){
+                    var reg = new RegExp("(^|&)"+ parmname +"=([^&]*)(&|$)");
+                    var r = window.location.search.substr(1).match(reg);
+                    if(r!=null)return  unescape(r[2]); return null;
+                }
+                var DeviceId = GetQueryString("id");
+                $(function(){
+                    $.ajax({
+                        type: "Post",
+                        url: "https://wx.sdkndsm.com/qishen/tp5/public/index.php/qisheng/Ptprograme/eq_detail.html",
+                        data: {
+                            DeviceId: DeviceId,
+                        },
+                        dataType: "json",
+                        success: function(data){
+                            document.getElementById('container').style.display="block"; 
+                            document.getElementById('container1').style.display="none";
+                            $('#container').css('width', '100%')
+                            data.obj.DeviceName !== '' ? $('#DeviceName').html(data.obj.DeviceName) : $('#DeviceName').html('暂无数据')
+                            data.obj.company_name !== '' ? $('#company_name').html(data.obj.company_name) : $('#company_name').html('暂无数据')
+                            data.obj.Vclass !== '' ? $('#Vclass ').html(data.obj.Vclass + 'Kv') : $('#Vclass').html('暂无数据')
+                            data.obj.EPLJ4 !== '' ? $('#EPLJ4').html(data.obj.EPLJ4) : $('#EPLJ4').html('暂无数据')
+                            data.obj.UQ !== '' ? $('#UQ').html(data.obj.UQ) : $('#UQ').html('暂无数据')
+                            data.obj.IQ !== '' ? $('#IQ').html(data.obj.IQ) : $('#IQ').html('暂无数据')
+                            data.obj.PQ !== '' ? $('#PQ').html(data.obj.PQ) : $('#PQ').html('暂无数据')
+                            data.obj.QQ !== '' ? $('#QQ').html(data.obj.QQ) : $('#QQ').html('暂无数据')
+                            data.obj.SQ !== '' ? $('#SQ').html(data.obj.SQ) : $('#SQ').html('暂无数据')
+                        }
+                    })
+                })
+            }else{
+                document.getElementById('container').style.display="none";
+                document.getElementById('container1').style.display="block"; 
+                $('#container1').css('width', '100%')
+
+            }
+        }
+        if (!window.WeixinJSBridge || !WeixinJSBridge.invoke) {
+            document.getElementById('container').style.display="none";
+            document.getElementById('container1').style.display="none";
+            document.addEventListener('WeixinJSBridgeReady', ready, false)
+        } else {
+            ready()
+        }
+        
+    </script>
+</body>
+</html>

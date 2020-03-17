@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="renderer" content="webkit">
+    <title>h5滑动</title>
+    <meta name="Keywords" content="" />
+	<meta name="Description" content="" />
+	<script src="./js/echarts.min.js"></script>
+	<style type="text/css">
+		html{
+			font-size: 10px;
+		}
+        *
+        {
+            padding: 0;
+            margin: 0;
+        }
+        img
+        {
+            border: 0 none;
+        }
+        .swipe-wrap
+        {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            /* overflow: hidden; */
+            z-index: 2;
+        }
+        .swipe
+        {
+            position: absolute;
+            width: 100%;
+        }
+        .swipe-box
+        {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+			color: #fff;
+			font-size: 1rem;
+        }
+        .swipe-boximg{
+			position: absolute;
+			top: 0;
+			left: 0;
+		}
+        
+        .next
+        {
+            position: fixed;
+            margin: 0 auto;
+            left: 0;
+            bottom: 10px;
+            right: 0;
+            text-align: center;
+            z-index: 3;
+            
+        }
+        .next img
+        {
+        	width: 2rem;
+        }
+
+		.mt2{
+			margin-top: 2rem;
+		}
+		.tcr{
+			text-align: center;
+		}
+		.dv_1{
+			background: url('./img/dv1.png');
+			background-position: left top;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size:100% 100%;
+		}
+		.dv_1 .top_1{
+			width: 17rem;
+			margin: 5rem auto;
+		}
+		.dv_1 .top_1 img{
+			width: 3rem;
+			height: 3rem;
+			margin-right: 1rem;
+			float: left;
+		}
+		.dv_1 .top_1 div:nth-child(2){
+			float: left;
+			width: 13rem;
+		}
+		.dv_1 .top_1 div:nth-child(3){
+			clear: both;
+		}
+
+		.dv_1 .top_1 div p:nth-child(1){
+			letter-spacing: 0.8rem;
+		}
+		.dv_1 .top_1 div p:nth-child(2){
+			letter-spacing: 0.1rem;
+		}
+
+		.lp{
+			letter-spacing: 0.1rem;
+		}
+		.zydf,
+		.zyd{
+			margin-top: 5rem;
+		}
+		.zydf>p:nth-child(1),
+		.zydf>p:nth-child(2),
+		.zyd>p:nth-child(1){
+			height: 2rem;
+			padding-left: 1rem;
+			border-left: 0.2rem solid #999;
+			margin-left: 4rem;
+			line-height: 3rem;
+		}
+		.dv_1 .zydf div,
+		.dv_1 .zyd div{
+			/* width: 6.6rem; */
+			height: 5rem;
+			margin: 3rem  auto 4rem;
+			background: url('./img/bk.png');
+			background-position: center;
+            background-repeat: no-repeat;
+            background-size:100% 88%;
+			line-height: 5rem;
+		}
+		.zydf div p span,
+		.zyd div p span{
+			font-size: 2rem;
+		}
+		.dv_1 .zydf div{
+			width: 10rem;
+		}
+		.mauto{
+			margin: 0 auto;
+			position: relative;
+		}
+		.share_dv {
+			width: 8rem;
+			margin: 20px auto;
+		}
+		.share{
+			background-color: #05b6f3;
+			color: #fff;
+			border-radius: 6px;
+			border: 2px solid #fff;
+			text-align: center;
+			width: 100%;
+			height: 3rem;
+			line-height: 3rem;
+		}
+		.topImg{
+			position: absolute;
+			width: 120px;
+			height: 100px;
+			top: 30px;
+			left: 30%;
+		}
+		.btmImg {
+			position: absolute;
+			width: 80px;
+			height: 130px;
+			top: 30px;
+			left: 30%;
+		}
+		.topP{
+			position: absolute;
+			bottom: 0px;
+			right: 30%;
+		}
+		.tcr_num{
+			font-size: 2.2rem;
+    		margin: 0 1rem;
+		}
+		.hidden{
+			display: none;
+		}
+		.show{
+			display: block;
+		}
+	</style>
+	
+</head>
+<body>
+	
+    <div class="swipe-wrap" id="slip">
+        <article class="swipe">
+			<div class="swipe-box dv_1">
+				<div class="top_1">
+					<img src="./img/logo.png" alt="">
+					<div>
+						<p>山西杉大科能</p>
+						<p>自动化科技有限公司</p>
+					</div>
+					<div></div>
+				</div>
+				<p class="mt2 tcr lp">启申电力管理</p>
+				<p class="mt2 tcr lp">每<span id="table_title1"></span>报表</p>
+				<div class="zyd">
+					<p class="lp">总用电</p>
+					<div>
+						<p class="tcr"><span id="total_power"></span>kw</p>
+					</div>
+				</div>
+
+				<div class="zydf mt2">
+						<p class="lp">总用电费</p>
+						<div>
+							<p class="tcr"><span id="total_power_money"></span>元</p>
+						</div>
+					</div>
+			</div>
+			<div class="swipe-box dv_2">
+				<p class="mt2 tcr lp">电费概况</p>
+				<div class="zyd">
+					<p class="lp"><span id="table_title2"></span>电费构成饼图</p>
+					<div id="dv_2_echart1" class="mauto" style="width: 100%;height:20rem;">
+						
+					</div>
+				</div>
+
+				<div class="zydf mt2">
+					<p class="lp saving">节约费用</p>
+					<p class="lp add">浪费费用</p>
+					<div id="dv_2_echart2" class="mauto" style="width: 80%;height:20rem;"></div>
+				</div>   
+			</div>
+			<div class="swipe-box dv_3">
+				<p class="mt2 tcr lp">往期相比</p>
+				<div class="zyd" id="top">
+					<p class="lp">较<span id="table_title3"></span>增加</p>
+					<div class="mauto" style="width: 100%;height:10rem;">
+						<img class="topImg" src="img/top.png" alt="">
+						<p class="topP">增加<span id="compare1"></span></p>
+					</div>
+				</div>
+				<div class="zyd" id="btm">
+					<p class="lp">较<span id="table_title4"></span>节约</p>
+					<div class="mauto" style="width: 100%;height:10rem;">
+						<img class="btmImg" src="img/btm.png" alt="">
+						<p class="topP">节约<span id="compare2"></span></p>
+					</div>
+				</div>
+
+				<div class="zydf mt2">
+					<p class="lp"><span id="table_title5"></span>趋势</p>
+					<div id="dv_3_echart2" class="mauto" style="width: 80%;height:20rem;"></div>
+					<p class="tcr">共<span id="tcr_title"></span><span class="tcr_num"></span>元</p>
+				</div>
+				<div class="share_dv"><button class="share">分享</button></div>
+			</div>
+		</article>
+	</div>
+	<div class="next">
+		<img src="img/next.png" />
+	</div>
+
+	<script type="text/javascript" src="js/jquery.js"></script>
+	<script type="text/javascript" src="js/slip.min.js"></script>
+	<script type="text/javascript">
+		
+	    $(function () {
+			var tableId = GetQueryString("id");
+	        var winWidth = $(window).width();
+			var winHeight = $(window).height();
+			var container = document.getElementById('slip');
+	        var pages = document.querySelectorAll('.swipe-box');
+			var slip = Slip(container, 'y').webapp(pages);
+			var data1 = []
+			var data2 = []
+			var data3 = []
+			var data4 = []
+			$.ajax({
+             type: "GET",
+             url: "https://wx.sdkndsm.com/qishen/tp5/public/index.php/qisheng/Customerprograme/webview_data.html",
+             data: {
+				 id: tableId
+			 },
+             dataType: "json",
+             success: function(data){
+				let obj = {}, obj1 = {}, obj2 = {}, obj3 = {},title = '';
+				obj3['name'] = data.obj.year_line[0]['company_name'] 
+				obj3['type'] = 'bar'
+				obj3['data'] = []
+				if(data.obj.type == 1){
+					$('#table_title1').html('日')
+					$('#table_title2').html('日')
+					$('#table_title3').html('昨日')
+					$('#table_title4').html('昨日')
+					$('#table_title5').html('日')
+					
+					data.obj.year_line.map(item => {
+						data3.push(item.forecast_date.substr(0,10))  
+						obj3['data'].push(item['get_use_electricity']); 
+					})
+					data4.push(obj3)
+				}else if(data.obj.type == 2){
+					$('#table_title1').html('周')
+					$('#table_title2').html('周')
+					$('#table_title3').html('上周')
+					$('#table_title4').html('上周')
+					$('#table_title5').html('周')
+					data.obj.year_line.map(item => {
+						data3.push(item.forecast_date.substr(0,10))  
+						obj3['data'].push(item['get_use_electricity']); 
+					})
+					data4.push(obj3)
+				}else{
+					$('#table_title1').html('月')
+					$('#table_title2').html('月')
+					$('#table_title3').html('上月')
+					$('#table_title4').html('上月')
+					$('#table_title5').html('月')
+					data.obj.year_line.map(item => {
+						data3.push(item.forecast_date.substr(0,7))  
+						obj3['data'].push(item['get_use_electricity']); 
+					})
+					data4.push(obj3)
+				}
+				// $('#').val(data.obj.title)
+				$('#total_power').html(data.obj.total_power)
+				$('.tcr_num').html(data.obj.totall_reduce)
+				$('#total_power').parent().parent().css('width', $('#total_power').width() + 50)
+				$('#total_power_money').html(data.obj.total_power_money)
+				$('#total_power_money').parent().parent().css('width', $('#total_power_money').width() + 50)
+				data.obj.power_consist.map(item => {
+					obj = item;
+					obj['name'] = item['power_from_name'];  
+					obj['value'] = item['power_from_price'];  
+					delete obj['power_from_name'];
+					delete obj['power_from_price'];
+					delete obj['company_id'];
+					delete obj['consist_type'];
+					delete obj['month_data'];
+					delete obj['id'];
+					data1.push(obj)  
+				})
+				obj1['name'] = '总电费'
+				obj2['name'] = '原来电费'
+				obj1['value'] = Number(data.obj.total_power_money)
+				obj2['value'] = Number(data.obj.org_total_power_money)
+				data2.push(obj1)
+				data2.push(obj2)
+				if(data.obj.org_total_power_money - data.obj.total_power_money > 0){
+					$('.saving').addClass('show')
+					$('.add').addClass('hidden')
+					title = '节约' + ((data.obj.org_total_power_money - data.obj.total_power_money)/data.obj.org_total_power_money * 100).toFixed(2) + '%'
+				}else{
+					$('.add').addClass('show')
+					$('.saving').addClass('hidden')
+					title = '浪费' + ((data.obj.total_power_money - data.obj.org_total_power_money)/data.obj.org_total_power_money * 100).toFixed(2) + '%'
+				}
+				 
+				if(data.obj.total_power_compare_before < 0){
+					$('#tcr_title').html('节约')
+					$('#btm').addClass('show')
+					$('#top').addClass('hidden')
+					var a = Math.abs(data.obj.total_power_compare_before) + '%'
+					$('#compare2').html(a)
+				}else{
+					$('#tcr_title').html('增加')
+					$('#btm').addClass('hidden')
+					$('#top').addClass('show')
+					var b = Math.abs(data.obj.total_power_compare_before) + '%'
+					$('#compare1').html(b)
+				}
+				// 此处 判断是否是最后一张 如果是隐藏向下箭头图标
+				slip.end(function() {
+					getecharts(this.page, data1, title, data2, data3, data4)
+				});
+			 }
+         	});
+	        // alert( winWidth + ' ' + winHeight)
+	        // debugger;
+			$(".dv_2").width = winWidth;
+			$(".dv_2").height = winHeight;
+			$(".dv_3").width = winWidth;
+			$(".dv_3").height = winHeight;
+
+			 $('.share').click('on', function(){
+				 console.log($('#weixinTip').html())
+				if($('#weixinTip').html()){
+					$('#weixinTip').show();
+				}else{
+					var weixinTip = $('<div id="weixinTip"><p><img src="img/zhuanfa.png" alt="微信打开"/></p></div>');
+					$("#slip").before(weixinTip);
+					$("#weixinTip").css({
+						"position":"fixed",
+						"left":"0",
+						"top":"0",
+						"height":winHeight,
+						"width":"100%",
+						"z-index":"1000",
+						"background-color":"rgba(0,0,0,0.8)",
+						"filter":"alpha(opacity=80)",
+					});
+					$("#weixinTip p").css({
+						"text-align":"center",
+						"margin-top":"10%",
+						// "padding-left":"5%",
+						// "padding-right":"5%"
+					});
+					$("#weixinTip p img").css({
+						"width":winWidth/3*2,
+						"margin-right":"-70px",
+					});
+					$("#weixinTip p img").click('on',function(){
+						$('#weixinTip').hide();
+					});
+				}
+				
+			 })
+			
+
+	        // 设置下载按钮样式
+	        $("#lbtn").css("width", (winWidth-70)/2);
+	        $("#rbtn").css("width", (winWidth-70)/2);
+
+			function getecharts(page, data1, pie_title, data2, data3, data4){
+				if (page === 3) {
+					
+				}else if (page === 2) {
+					$(".next").css("display","none");
+					$(".dv_3").css("background", "url('./img/dv3.png')")
+					$(".dv_3").css("backgroundPosition", "center")
+					$(".dv_3").css("backgroundRepeat", "no-repeat")
+					$(".dv_3").css("backgroundSize", "100% 100%")
+					var myChart4 = echarts.init(document.getElementById('dv_3_echart2'));
+					option3 = {
+						tooltip: {
+							trigger: 'axis',
+							axisPointer: {
+								type: 'cross',
+								crossStyle: {
+									color: '#999'
+								}
+							}
+						},
+						grid: {
+							top: 30,
+							x: 60,
+							y: 40,
+							x2: 60,
+							y2: 60
+						},
+						xAxis: [
+							{
+								type: 'category',
+								data: data3,
+								textStyle:{
+									color:'#fff'
+								},
+								axisLabel: {
+									rotate: 30,
+									textStyle: {
+										fontSize:10,
+										color: '#fff',//坐标值得具体的颜色
+									}
+								}
+							}
+						],
+						yAxis: [
+							{
+								type: 'value',
+								// name: '水量',
+								min: 0,
+								axisLabel: {
+									textStyle: {
+										fontSize:10,
+										color: '#fff',//坐标值得具体的颜色
+									}
+								}
+							}
+						],
+						series: data4
+					};
+					myChart4.setOption(option3);
+				}else{
+					$(".next").css("display","");
+					$(".dv_2").css("background", "url('./img/dv2.png')")
+					$(".dv_2").css("backgroundPosition", "center")
+					$(".dv_2").css("backgroundRepeat", "no-repeat")
+					$(".dv_2").css("backgroundSize", "100% 100%")
+					//饼状图
+					var myChart1 = echarts.init(document.getElementById('dv_2_echart1'));
+					option1 = {
+						tooltip : {
+							trigger: 'item',
+							formatter: "{b} : {c} ({d}%)"
+						},
+						series : [
+							{
+								type: 'pie',
+								radius : '45%',
+								center: ['50%', '60%'],
+								label: {
+									normal: {
+										show: true,
+										formatter: "{b} ({d}%)"
+									}
+								},
+								data: data1
+							}
+						]
+					};
+					myChart1.setOption(option1);
+					//环形图
+					var myChart2 = echarts.init(document.getElementById('dv_2_echart2'));
+					option2 = {
+						tooltip: {
+							trigger: 'item',
+							formatter: "{b}: {c} ({d}%)"
+						},
+						graphic: [{ //环形图中间添加文字
+								type: 'text', //通过不同top值可以设置上下显示
+								left: 'center',
+								top: '45%',
+								style: {
+									text: pie_title,
+									textAlign: 'center',
+									fill: 'white', //文字的颜色
+									width: 30,
+									height: 30,
+									fontSize: 14,
+									fontFamily: "Microsoft YaHei"
+								}
+							}],
+						series: [
+							{
+								type:'pie',
+								radius: ['50%', '70%'],
+								avoidLabelOverlap: false,
+								label: {
+									normal: {
+										show: false,
+										position: 'center'
+									}
+								},
+								labelLine: {
+									normal: {
+										show: false
+									}
+								},
+								data: data2
+							}
+						]
+					};
+					myChart2.setOption(option2);
+				}
+			}
+
+			function GetQueryString(parmname){
+				var reg = new RegExp("(^|&)"+ parmname +"=([^&]*)(&|$)");
+				var r = window.location.search.substr(1).match(reg);
+				if(r!=null)return  unescape(r[2]); return null;
+			}
+			// function is_weixin() {
+			//     var ua = navigator.userAgent.toLowerCase();
+			//     if (ua.match(/MicroMessenger/i) == "micromessenger") {
+			//         return true;
+			//     } else {
+			//         return false;
+			//     }
+			// }
+			// function is_mobileQQ() {
+			// 	var ua = navigator.userAgent.toLowerCase();
+			// 	if (ua.match(/\sQQ/i) == " qq") {
+			// 		return true;
+			// 	} else {
+			// 		return false;
+			// 	}
+			// }
+			// var isWeixin = is_weixin();
+			// var isMobileQQ = is_mobileQQ();
+			// var weixinTip = $('<div id="weixinTip"><p><img src="img/live_weixin.png" alt="微信打开"/></p></div>');
+			// alert(isWeixin)
+			// alert(isMobileQQ)
+			
+			// if(isWeixin || isMobileQQ){
+			// 	$("#slip").before(weixinTip);
+			// }
+			// $("#weixinTip").css({
+			// 	"position":"fixed",
+			// 	"left":"0",
+			// 	"top":"0",
+			// 	"height":winHeight,
+			// 	"width":"100%",
+			// 	"z-index":"1000",
+			// 	"background-color":"rgba(0,0,0,0.8)",
+			// 	"filter":"alpha(opacity=80)",
+			// });
+			// $("#weixinTip p").css({
+			// 	"text-align":"center",
+			// 	"margin-top":"10%",
+			// 	// "padding-left":"5%",
+			// 	// "padding-right":"5%"
+			// });
+			// $("#weixinTip p img").css({
+			// 	"width":winWidth/3*2,
+			// 	"margin-right":"-70px",
+			// });
+	    });
+
+	</script>
+</body>
+</html>
